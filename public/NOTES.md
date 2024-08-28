@@ -207,5 +207,23 @@ export default AllProducts
 ```
 #### Creating another endpoint in productApi
 
+```js
+export const productApi = createApi({
+    reducerPath : "products",
+    baseQuery : fetchBaseQuery({baseUrl : 'https://dummyjson.com'}),
+    endpoints : (builder) => ({
+        // get all the products (Reading the data thatwhy .query)
+        getAllProducts : builder.query({
+            query : () => "/products"
+        }),
 
+        // anoter endpoint
+        getProductById : builder.query({
+            query : (id) => `/products/${id}`
+        })
+    }),
+})
+
+export const {useGetAllProductsQuery, useLazyGetProductByIdQuery} = productApi;
+```
 ## Projects

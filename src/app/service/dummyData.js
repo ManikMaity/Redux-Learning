@@ -10,8 +10,10 @@ export const productApi = createApi({
         }),
 
         // anoter endpoint
-        
+        getProductById : builder.query({
+            query : (id) => `/products/${id}`
+        })
     }),
 })
 
-export const {useGetAllProductsQuery} = productApi;
+export const {useGetAllProductsQuery, useLazyGetProductByIdQuery} = productApi;
