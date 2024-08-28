@@ -1,0 +1,137 @@
+# Redux - (Toolkit + Core)
+
+## Resouces 
+- [HuXn WebDev Yt - Redux](https://www.youtube.com/watch?v=CI8VeG0GI-M)
+
+
+## Notes + Key Concept
+
+### Installing redux toolkit & React Redux
+```
+npm install @reduxjs/toolkit react-redux
+```
+### Store
+Store is the central place where the app sate is strored. 
+
+#### Creating a store
+- Make a `app` folder inside the src and make `store.js` file.
+- We have to import `configureStore` fn from redux toolkit and pass an obj with reducer as a argument.
+- We can store it in a variable and export it.
+
+```js
+import { configureStore } from "@reduxjs/toolkit"
+
+export const store = configureStore({
+    reducer : {
+
+    }
+})
+```
+#### Providing the store to react componets 
+- Go to main component
+- import the `store` you made and `<Provider>` component of react-redux and wrap the app with `Provider` componet and pass the store value in it;
+```js
+import { createRoot } from 'react-dom/client'
+import App from './App.jsx'
+import './index.css'
+import { store } from './app/store.js'
+import { Provider } from 'react-redux'
+
+createRoot(document.getElementById('root')).render(
+  <Provider store={store}>
+    <App />
+  </Provider>
+)
+
+```
+
+#### Slice
+- Piece of store state
+- smaller part of antire state and instuction how to change that specific state.
+- Make a folder named `features` inside the `app` and inside features make `counter` folder.
+- Inside `counter` folder make the slice `counterSlice.js` file.
+- we have to import `createSlice` fn and pass a obj.
+- the obj have name, initialState, and reducers
+- Initial state is a obj with `key(name)` and `value(inital value, all types)`
+- reduers will take function to `change or updated` the value, it called `actions`
+- we have to export counterSlice which store the createSlice fn return.
+- have to export action functions using `counterSlice.actions` destrucring.
+- defoult export `counterSlice.reducers`
+
+```js
+import { createSlice } from "@reduxjs/toolkit";
+
+export const counterSlice = createSlice({
+    name : "counter",
+
+    initialState : {value : 0},
+
+    // Althugh we are mutating our state but it will trigger render
+    reducers : {
+        increment : (state) => {
+            state.value += 1;
+        },
+        decrement : (state) => {
+            state.value -= 1;
+        }
+    }
+});
+
+export const {increment, decrement} = counterSlice.actions;
+export default counterSlice.reducer;
+```
+
+#### Binding the slice to store
+- We have to import default export of `counterSlice` which is `counterSlice.reducer` as counterReducer inside store.
+- Then we have pass it with a key (counter) inside reducer obj.
+
+```js
+import { configureStore } from "@reduxjs/toolkit"
+import counterReducer from "./features/counter/counterSlice"
+
+export const store = configureStore({
+    reducer : {
+        counter : counterReducer,
+    },
+})
+```
+
+#### Using Redux state and actions in react component
+- import `useSelector and useDepatch` hook form react-redux inside component
+- import `increment and decrement` from the counterSlice
+- `useSelector` help us to read the data from redux store.
+- `useDepatch` .... change data in redux store using actions.
+- we have to get the initial value using useSelector which take a fn.
+
+
+```js
+import React from "react";
+import "./counter.css";
+
+// import for redux
+import {useSelector, useDispatch} from "react-redux"
+import {increment, decrement} from "../app/features/counter/counterSlice"
+
+
+function Counter() {
+
+    // Read the value from the store
+    const count = useSelector((state) => state.counter.value);
+
+    // changing the data by sending `actions` to the store
+    const dispatch = useDispatch();
+
+  return (
+    <div className="counter">
+      <p>{count}</p>
+      <button onClick={() => dispatch(increment())}>Increment</button>
+      <button onClick={() => dispatch(decrement())}>Decrement</button>
+    </div>
+  );
+}
+
+export default Counter;
+
+```
+
+## Projects
