@@ -6,11 +6,13 @@
 
 ## Notes + Key Concept
 
-### Installing redux toolkit & React Redux
+### Redux Toolkit
+
+#### Installing redux toolkit & React Redux
 ```
 npm install @reduxjs/toolkit react-redux
 ```
-### Store
+#### Store
 Store is the central place where the app sate is strored. 
 
 #### Creating a store
@@ -133,5 +135,77 @@ function Counter() {
 export default Counter;
 
 ```
+### RTK Query
+1. Install Redux Toolkit and React Redux.
+2. Create a store and configure it using `configureStore`.
+3. Provide the store to the entire application using the `<Provider>` component.
+- (Same As before)
+
+#### Create a service 
+- Inside the app make `service` make a `dummyData.js` file.
+- Wite a code like this --
+```js
+import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
+
+export const productApi = createApi({
+    reducerPath : "products",
+    baseQuery : fetchBaseQuery({baseUrl : 'https://dummyjson.com'}),
+    endpoints : (builder) => ({
+        // get all the products (Reading the data thatwhy .query)
+        getAllProducts : builder.query({
+            query : () => "/products"
+        }),
+    }),
+})
+
+export const {useGetAllProductsQuery} = productApi;
+```
+
+#### Register service inside Store
+```js
+import { configureStore } from "@reduxjs/toolkit"
+// import counterReducer from "./features/counter/counterSlice"
+import { setupListeners } from "@reduxjs/toolkit/query"
+import { productApi } from "./service/dummyData"
+
+export const store = configureStore({
+    reducer : {
+        [productApi.reducerPath] : productApi.reducer,
+        // counter : counterReducer,
+    },
+
+    // dont worry about
+    middleware : (getDefaultMiddleware) => 
+        getDefaultMiddleware().concat(productApi.middleware),
+})
+
+
+setupListeners(store.dispatch);
+```
+#### Using RTX query inside compoent 
+```js
+import React from 'react'
+import { useGetAllProductsQuery } from '../app/service/dummyData'
+
+function AllProducts() {
+
+    const {data, isError, isLoading} = useGetAllProductsQuery();
+
+
+  return (
+    <div>
+      <p>All products</p>
+      {isError && <div>Error!</div>}
+      {isLoading && <div>Loading...</div>}
+      {data && data?.products.map((product, index)  => <li key={product.id || index}>{product?.title}</li>)}
+    </div>
+  )
+}
+
+export default AllProducts
+
+```
+#### Creating another endpoint in productApi
+
 
 ## Projects
