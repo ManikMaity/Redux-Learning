@@ -1,4 +1,4 @@
-export default function TodoReducer(state, action) {
+export default function TodoReducer(state = [], action) {
   if (action.type == "add_todo") {
     if (action.payload.todoText.trim() === "") {
       return;
